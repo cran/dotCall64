@@ -52,14 +52,15 @@
 #' by the compiled C or Fortran code.
 #'  
 #' @references
-#' F. Gerber, K. Moesinger, and R. Furrer,
-#' "dotCall64: An efficient interface to compiled C/C++ and Fortran code
-#' supporting long vectors", submitted to the Rjournal, 2016.
+#' F. Gerber, K. Moesinger, and R. Furrer (2017),
+#' Extending R packages to support 64-bit compiled code: An illustration with spam64 and GIMMS NDVI3g data,
+#' Computer & Geoscience 104, 109-119,
+#' https://doi.org/10.1016/j.cageo.2016.11.015.
 #'
-#' F. Gerber, K. Moesinger, and R. Furrer,
-#' "Extending R packages to support 64-bit compiled code: An illustration
-#' with spam64 and GIMMS NDVI 3g data", submitted to Computers & Geoscience, 2015.
-#'
+#' F. Gerber, K. Moesinger, and R. Furrer (2017),
+#' dotCall64: An efficient interface to compiled C/C++ and Fortran code supporting long vectors,
+#' https://arxiv.org/abs/1702.08188.
+#' 
 #' @examples
 #' ## Consider the following C function, which is included
 #' ## in the dotCall64 package:  
@@ -112,7 +113,7 @@
 #'      input = x_long, index = 2^31, output = double(1))$output
 #'
 #' }
-#' @useDynLib dotCall64
+#' @useDynLib dotCall64, .registration = TRUE
 #' @export
 #' @name dotCall64
 .C64 <- function(.NAME, SIGNATURE, ..., INTENT = NULL, NAOK = FALSE,

@@ -1,7 +1,6 @@
 #include "dotCall64.h"
 
 // MAYBE_SHARED is not available in R 3.0.1
-// TODO: find out when introduced
 #ifndef MAYBE_SHARED
 #define MAYBE_SHARED(x) (NAMED(x) > 1)
 #define NO_REFERENCES(x) (NAMED(x) == 0)
@@ -26,6 +25,10 @@
 // copied from dotcode.c:69
 #define MaxSymbolBytes 1024
 
+/* Define PATH_MAX for GNU/Hurd */
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 
 /* Attributes like PACKAGE have to be prefixed in order to not get interpreted by .External(...) */
@@ -90,7 +93,7 @@ SEXP dC64(SEXP args_in) {
 	SEXP args[MAX_ARGS];
 	SEXP args_names[MAX_ARGS];
 
-	int n_protect = 0; // counts the number of times that PROTECT has been called.
+	int n_protect = 0; // counts how many times PROTECT has been called.
 
 	// The first argument contains the value "dotCall64", as it is the first argument given to .External(...).
 	args_in = CDR(args_in);
@@ -104,10 +107,9 @@ SEXP dC64(SEXP args_in) {
 		}
 	}
 
-
-	// Copy the symbol Name:
+	// Copy the symbol name:
 	p = translateChar(STRING_ELT(CAR(args_in), 0));
-	if(strlen(p) > PATH_MAX - 1)
+	if(strlen(p) > MaxSymbolBytes - 1)
 		error(_("argument '.NAME' is too long (dotCall64)"));
 	strcpy(symName, p);
 
@@ -116,7 +118,7 @@ SEXP dC64(SEXP args_in) {
 
 	// Get the effective arguments:
 	argsfind(args_in, args, args_names, &nargs, packageName, &signature, &intent, &naok, &verbose);
-	// We don't need to PROTECT args and args_names, because they are protected by being a subobject of args_in.
+	// We do not need to PROTECT args and args_names, because they are protected by being a subobject of args_in.
 
 	// Check the NAOK argument
 	if(!naok || LENGTH(naok) != 1)
@@ -145,7 +147,7 @@ SEXP dC64(SEXP args_in) {
 	}
 
 	// We cannot check if the number of given arguments equals to the number of expected arguments because
-	// R_RegisteredNativeSymbol is declared private API.
+	// R_RegisteredNativeSymbol is declared as private API.
 
 
 	// Any argument of class "vector_dc" must be expanded to the correct type
@@ -164,7 +166,7 @@ SEXP dC64(SEXP args_in) {
 	}
 
 
-	// First we determine the current type of the vectors, as they represent the default type:
+	// First we determine the current types of the vectors, as they represent the default types:
 	int args_type[MAX_ARGS];
 	int args_intent[MAX_ARGS];
 	SEXP sexpargs[MAX_ARGS];
@@ -207,7 +209,7 @@ SEXP dC64(SEXP args_in) {
 	}
 
 
-	// Determine if the arguments were named and keep the names if true.
+	// Determine if the arguments are named and keep the names if true.
 	SEXP names = NULL;
 	Rboolean havenames = FALSE;
 	for(na = 0; na < nargs; na++) {
@@ -225,11 +227,11 @@ SEXP dC64(SEXP args_in) {
 	}
 
 
-	// Finally, call the function
+	// Call the function.
 	dotCall64(fun, nargs, sexpargs, args_type, args_intent, flag_naok, flag_verbose);
 
 
-	// First, protect every 'write' argument returned by dotCall64
+	// Protect every 'write' argument returned by dotCall64.
 	for (na = 0 ; na < nargs; na++) {
 		if(!HAS_INTENT_WRITE(args_intent[na]))
 			continue;
@@ -241,7 +243,7 @@ SEXP dC64(SEXP args_in) {
 	PROTECT(answer = allocVector(VECSXP, nargs));
 	n_protect++;
 
-	// Add the argument names, if available:
+	// Add the argument names, if available.
 	if (names) {
 		setAttrib(answer, R_NamesSymbol, names);
 	}
@@ -264,7 +266,7 @@ SEXP dC64(SEXP args_in) {
 void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_intent_in, int flag_naok, int flag_verbose) {
 
 	int na;
-	// The do_ variables contain the instructions that will applied by the function 'prepareArguments(...)'.
+	// The do_ variables contain the instructions for the 'prepareArguments(...)' function.
 	SEXPTYPE do_type[MAX_ARGS]; //
 	int do_alloc[MAX_ARGS]; //
 	int do_coerce[MAX_ARGS];
@@ -277,8 +279,8 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 		error(_("dotCall64 only supports up to 64 arguments (dotCall64)"));
 
 	// When an object is given multiple times as an argument, we have to be careful. 
-	// To exclude any side effects, we duplicate every object when it's INTENT is write. 
-	// If the type is of int64, we duplicate it in every case.
+	// To exclude any side effects, we duplicate every object when its INTENT is write. 
+	// If the type is int64, we duplicate it in every case.
 	for(na = 0; na < nargs; na++) {
 		args_intent[na] = args_intent_in[na];
 	}
@@ -311,28 +313,28 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 		int maybe_shared = MAYBE_SHARED(s);  // Unused
 
 
-		// First, determine the expected R type of the object
+		// Determine the expected R type of the object.
 		if(args_type[na] == INT64_TYPE) {
-			// int64 is based on the double type
+			// int64 is based on the double type.
 			do_type[na] = REALSXP;
 		}else{
 			do_type[na] = args_type[na];
 		}
 
-		// Check if we should raise a warning, because we didn't get the expected type:
+		// Check if a warning should be raised in case the provided argument type dose not match the expected type.
 		if(flag_verbose >= 1 && TYPEOF(s)!=do_type[na]) {
 			warning(_("[dotCall64|wrong R object type] argument %d; expected type '%s'; got type '%s'; argument coerced"),
 					na+1, type2char(do_type[na]), CHAR(type2str(TYPEOF(s))));
 		}
 
-		// Start with the flowchart:
+		// Start flowchart.
 		if(HAS_INTENT_WRITE(args_intent[na]) && !HAS_INTENT_READ(args_intent[na])) {
-			// Right part of the flowchart
+			// Right part of the flowchart.
 			// Intent = w
 			if(TYPEOF(s) == do_type[na] && !maybe_referenced) {
-				// We can just pass the object as argument
+				// We can just pass the object as argument.
 			}else{
-				// We need a new object for the return value:
+				// We need a new object for the return value.
 			         if(flag_verbose >= 1 && maybe_referenced) {
 				     warning(_("[dotCall64|referenced 'w' argument] argument %d has 'INTENT' 'w' and is referenced.\nConsider using vector_dc() to avoid copying."),
                                              na+1);
@@ -340,14 +342,14 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 			        do_alloc[na] = 1;
 			}
 
-			// Check if we have to cast back:
+			// Check if we have to cast back.
 			if(args_type[na] == INT64_TYPE) {
 				do_cast_back[na] = 1;
 			}
 
 		}else if(args_type[na] == INT64_TYPE) {
-			// Left part of the flowchart
-			// Argument of type int_64 with intents r, rw
+			// Left part of the flowchart.
+			// Argument of type int_64 with intents r, rw.
 
 			if(TYPEOF(s) == INTSXP || TYPEOF(s) == REALSXP) {
 				do_alloc[na] = 1;
@@ -355,7 +357,7 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 				do_coerce[na] = 1;
 			}
 
-			// As the argument is read, we have to cast from double->int64
+			// As the argument is read, we have to cast from double->int64.
 			do_cast_in[na] = 1;
 
 			if(HAS_INTENT_WRITE(args_intent[na])) {
@@ -364,12 +366,12 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 
 		}else{
 			// Center part of the flowchart
-			// argument of native type:
+			// Argument of native type.
 			if(TYPEOF(s)!=do_type[na]) {
-				// Well, we got the wrong type:
+				// wrong type.
 				do_coerce[na] = 1;
 			}else if(HAS_INTENT_WRITE(args_intent[na])) {
-				// intent= rw
+				// intent= rw.
 				do_duplicate[na] = 1;
 			}
 		}
@@ -393,12 +395,12 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 			     int *do_duplicate, int *do_cast_in, int *do_cast_back, int *flag_naok) {
 
 	int na;
-	void **cargs[MAX_ARGS]; // pointers for the actual function
-	SEXP args_in[MAX_ARGS]; // Contains a copy of the arguments given
+	void **cargs[MAX_ARGS]; // pointers for the actual function.
+	SEXP args_in[MAX_ARGS]; // contains a copy of the given arguments.
 
-	int n_protect = 0; // contains the number of times that PROTECT has been called.
+	int n_protect = 0; // counts how many times PROTECT has been called.
 
-	// Copy the the argument: Used for efficient int64 casting.
+	// Copy the argument (for efficient int64 casting).
 	for(na=0; na < nargs; na++)
 		args_in[na] = args[na];
 
@@ -412,13 +414,13 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 		}else if(do_coerce[na]) {
 			args[na] = PROTECT(coerceVector(s, do_type[na]));
 			n_protect++;
-			args_in[na] = args[na]; // If we coerce, we pretend that we were given that object
+			args_in[na] = args[na]; // If coerce, pretend that this object was provided
 		}else if(do_duplicate[na]) {
 			args[na] = PROTECT(duplicate(s));
 			n_protect++;
 		}
 
-		// we will now work on the new object:
+		// We will now work on the new object.
 		s = args[na];
 		
 
@@ -464,8 +466,8 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 	}
 
 
-	// We do coerce any argument of type int64 (from double -> int64_t).
-	// We cannot do this earlier. We might overwrite the memory of the object and so any call to 'error()' would
+	// Coerce arguments of type int64 (from double -> int64_t).
+	// We cannot do this earlier as the memory of the object might be overwritten, and hence, any call to 'error()' would
 	// destroy the object.
 	for(na = 0; na < nargs; na++) {
 		SEXP s = args[na];
@@ -476,17 +478,17 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 			R_xlen_t i, len;
 			len = XLENGTH(s);
 
-			// We will cast into this pointer:
+			// We will cast into this pointer.
 			int64_t *iptr = (int64_t*) REAL(s);
 
 			// All other types have been coerced to REALSXP.
-			// We handle INTSXP separately, as this can happen in spam.
+			// We handle INTSXP separately
 			if(TYPEOF(args_in[na]) == REALSXP) {
 				double *in_ptr = REAL(args_in[na]);
 
 #pragma omp parallel for default(none) shared(len, iptr, in_ptr) private(i)
 				for(i=0; i < len; i++) {
-					// TODO: Check if value is too high -> raise warning
+					// #1
 					iptr[i] = (int64_t) in_ptr[i];
 				}
 			}else if(TYPEOF(args_in[na]) == INTSXP) {
@@ -494,21 +496,20 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 
 #pragma omp parallel for default(none) shared(len, iptr, in_ptr) private(i)
 				for(i=0; i < len; i++) {
-					// TODO: Check if value is too high -> raise warning
+					// #1
 					iptr[i] = (int64_t) in_ptr[i];
 				}
 			}else{
-				// We should never get here.
-				error(_("should not happen: internal error (do_cast_in) (dotCall64)"));
+			        error(_("should not happen: internal error (do_cast_in) (dotCall64)"));
 			}
 		}
 	}
 
-	// Finally, call the function
+	// Finally, call the function.
 	dotCall64_callFunction(fun, nargs, (void**)cargs);
 
 
-	// The values of every argument of type int64 has to be cast back:
+	// Back cast the values of all arguments of type int64.
 	for(na = 0; na < nargs; na++) {
 		SEXP s = args[na];
 
@@ -521,10 +522,7 @@ static void prepareArguments(DL_FUNC fun, int nargs, SEXP *args,
 
 #pragma omp parallel for default(none) shared(len, iptr, dptr) private(i)
 			for(i=0; i < len; i++) {
-// TODO: If value cannot be cast precisely -> raise warning
-//	if(iptr[i] > R_XLEN_T_MAX && ((int64_t)((double)iptr[i])) - iptr[i] != 0 )
-//		warning(_("Element %d of argument %d cannot be cast from int64_t to double precisely (difference %d)."),
-//				i+1, na+1, ((int64_t)((double)iptr[i])) - iptr[i]);
+// #2
 				dptr[i] = (double) iptr[i];
 			}
 		}
@@ -552,7 +550,7 @@ static void argsfind(SEXP args_in, SEXP *args, SEXP *names,int *len, char *packa
 		VerboseSymbol = install("VERBOSE");
 	}
 
-	// Initialize it to an empty string
+	// Initialize to an empty string
 	strcpy(packageName, "");
 	*signature = NULL;
 	*intent = NULL;
@@ -645,8 +643,6 @@ static int dotCall64str2type(SEXP s) {
 
 	if(strcmp(str, INT64_STRING) == 0) {
 		return INT64_TYPE;
-
-		// just for convenience:
 	}else if(strcmp(str, "int") == 0) {
 		return INTSXP;
 	}else if(strcmp(str, "int32") == 0) {
