@@ -13,19 +13,18 @@ numeric_dc(length = 0)
 integer_dc(length = 0)
 }
 \arguments{
-\item{mode}{Character vector of length 1. Storage mode of the vector to allocate.}
+\item{mode}{character vector of length 1. Storage mode of the vector.}
 
-\item{length}{Numeric vector of length 1. Length of the vector to allocate.}
+\item{length}{numeric vector of length 1. Length of the vector.}
 }
 \value{
-Object of class \code{vector_dc} and \code{list}.
+object of class \code{vector_dc} and \code{list}.
 }
 \description{
-Helper functions to be used in calls to \code{\link{.C64}}.
-The function \code{vector_dc} and its shortcuts \code{numeric_dc} and
-\code{integer_dc} return a R object of class \code{c("vector_dc", "list")}
-containing the necessary information (type and length) to allocate the
-vector (initialized with 0) inside the call to \code{\link{.C64}}.
+\code{vector_dc} and its shortcuts \code{numeric_dc} and
+\code{integer_dc} are helper functions used in calls to \code{\link{.C64}}.
+They return an R object of class \code{c("vector_dc", "list")}, 
+which contains information on the type and length of the vector to allocate.
 Using \code{vector_dc} together with \code{INTENT = "w"} argument of \code{\link{.C64}}
 leads to performance gains by avoiding unnecessary castings and copies.
 }

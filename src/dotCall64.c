@@ -64,8 +64,6 @@ int str2intent(SEXP str) {
 		switch(p[i]) {
 		case('r'): x |= INTENT_READ; break;
 		case('w'): x |= INTENT_WRITE; break;
-//		case('c'): x |= INTENT_COPY; break;      // disabled
-//		case('s'): x |= INTENT_SPEED; break;
 		default: error(_("unknown intent '%c'"), p[i]);
 		}
 	}

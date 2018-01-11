@@ -1,26 +1,27 @@
 #' dotCall64 - Extended Foreign Function Interface
 #' 
-#' \code{.C64} can be used to call compiled and loaded C functions and Fortran subroutines.
-#' It works similar to \code{\link{.C}} and \code{\link{.Fortran}}, and 
+#' \code{.C64} can be used to call compiled and loaded C/C++ functions and Fortran subroutines.
+#' \code{.C64} is similar to \code{\link{.C}} and \code{\link{.Fortran}}, but
 #' \enumerate{
-#'    \item supports long vectors, i.e., vectors with more than \code{2^31-1} elements,
+#'    \item supports long vectors, i.e., vectors with more than \code{2^31-1} elements
 #'    \item does the necessary castings to expose the R representation of "64-bit integers" (numeric vectors)
-#' to 64-bit integers arguments of the compiled function; int64_t types in C and integer (kind = 8) in Fortran,
-#'    \item provides a mechanism the control the duplication of the R objects exposed to the compiled code,
-#'    \item checks if the provided R objects are of the expected type and coerces the R object if necessary. 
+#' to 64-bit integer arguments of the compiled function. The latter are int64_t in C code and integer (kind = 8) in Fortran code
+#'    \item provides a mechanism the control duplication of the R objects exposed to the compiled code
+#'    \item checks if the provided R objects are of the expected types and coerces them if necessary
 #' }
 #' Compared to \code{\link{.C}}, \code{.C64} has the additional arguments \code{SIGNATURE}, \code{INTENT} and \code{VERBOSE}.
 #' \code{SIGNATURE} specifies the types of the arguments of the compiled function.
-#' \code{INTENT} indicates whether the compiled function "reads", "writes", or "read and writes" the R objects passed
-#' to the compiled function. This is then used to duplicates R objects if (and only if) necessary. 
+#' \code{INTENT} indicates whether the compiled function "reads", "writes",
+#' or "read and writes" to the R objects passed to the compiled function.
+#' This information is then used to duplicate R objects if and only if necessary.
 #' 
-#' @param .NAME a character vector of length 1. Specifies the name of the compiled function to be called. 
-#' @param SIGNATURE a character vector of the same length as the number of arguments of the compiled function.
-#' Accepted strings are \code{"double"}, \code{"integer"}, \code{"int64"} describing the signature
-#' of each argument of the compiled function.
+#' @param .NAME character vector of length 1. Name of the compiled function to be called.
+#' @param SIGNATURE character vector of the same length as the number of arguments of the compiled function.
+#' Accepted strings are \code{"double"}, \code{"integer"}, and \code{"int64"}.
+#' They describe the signature of each argument of the compiled function.
 #' @param ... arguments passed to the compiled function. One R object for each argument. Up to 65 arguments are supported.
-#' @param INTENT a character vector of the same length as the number of arguments of the compiled code.
-#' Accepted strings are \code{"rw"}, \code{"r"} or \code{"w"} indicating
+#' @param INTENT character vector of the same length as the number of arguments of the compiled function.
+#' Accepted strings are \code{"rw"}, \code{"r"}, and \code{"w"}, which indicate
 #' whether the intent of the argument is "read and write", "read", or "write", respectively.
 #' If the INTENT of an argument is \code{"rw"}, the R object is copied and the
 #' compiled function receives a pointer to that copy.
@@ -29,27 +30,25 @@
 #' While this avoids copying and hence is more efficient in terms of speed and memory usage,
 #' it is absolutely necessary that the compiled function does not alter the object,
 #' since this corrupts the R object in the current R session.
-#' When the intent is \code{"w"}, the corresponding input argument can be specified
+#' When the INTENT is \code{"w"}, the corresponding input argument can be specified
 #' with the function \code{\link{vector_dc}} or its shortcuts \code{\link{integer_dc}} and \code{\link{numeric_dc}}.
 #' This avoids copying the passed R objects and hence is more efficient in terms of speed and memory usage.
-#' By default, all arguments have intent \code{"rw"}.
-#' @param NAOK logical vector of length 1. If \code{FALSE} (default), the presence of \code{NA} or \code{NaN} or \code{Inf}
+#' By default, all arguments have INTENT \code{"rw"}.
+#' @param NAOK logical vector of length 1. If \code{FALSE} (default), the presence of \code{NA}, \code{NaN}, and \code{Inf}
 #' in the R objects passed through \code{...} results in an error.
-#' If \code{TRUE}, any \code{NA} or \code{NaN} or \code{Inf} values in the
-#' arguments are passed on to the compiled function.
-#' The used time to check arguments (if \code{FALSE}) maybe considerable for large vectors. 
+#' If \code{TRUE}, \code{NA}, \code{NaN}, and \code{Inf} values are passed to the compiled function.
+#' The used time to check arguments (if \code{FALSE}) is considerable for large vectors. 
 #' @param PACKAGE character vector of length 1. Specifies where to search for the function given in \code{.NAME}. 
 #' This is intended to add safety for packages,
 #' which can use this argument to ensure that no other package can override their external symbols,
 #' and also speeds up the search.
-#' @param VERBOSE Numeric vector of length 1. If \code{0}, no warnings are printed.
-#' If \code{1} warnings are printed (which may help to improve the performance of the call),
-#' If \code{2} additional debug information is given as warnings.
+#' @param VERBOSE numeric vector of length 1. If \code{0}, no warnings are printed.
+#' If \code{1}, warnings are printed, which help to improve the performance of the call.
+#' If \code{2}, additional debug information is given as warnings.
 #' The default value can be changed via the \code{dotCall64.verbose} option, which is set to \code{0} by default. 
 #'  
-#' @return  A list similar to the \code{...} list of arguments passed in (including
-#' any names given to the arguments), but reflecting any changes made
-#' by the compiled C or Fortran code.
+#' @return  list of R objects similar to the list of arguments specified as \code{...} arguments.
+#' The objects of the list reflect the changes made by the compiled C or Fortran function.
 #'  
 #' @references
 #' F. Gerber, K. Moesinger, and R. Furrer (2017),
@@ -68,7 +67,7 @@
 #' ##     output[0] = input[index[0] - 1];
 #' ## }
 #' ##
-#' ## We can use .C64() the call it from R:
+#' ## We can use .C64() to call get_c() from R:
 #' .C64("get_c", SIGNATURE = c("double", "integer", "double"),
 #'      input = 1:10, index = 9, output = double(1))$output
 #'
@@ -79,23 +78,23 @@
 #' .C64("get_c", SIGNATURE = c("double", "integer", "double"),
 #'      input = x_long, index = 9, output = double(1))$output
 #'
-#' ## Since 'index' is of type 'signed int' resulting in a 32-bit integer,
-#' ## it can only capture integers op to 2^31-1. To extend this,
-#' ## we define the C function as follows:
-#' ## #include <stdint.h>  // defines the int64_t type
+#' ## Since 'index' is of type 'signed int' (a 32-bit integer),
+#' ## it can only address the first 2^31-1 elements of 'input'.
+#' ## To also address elements beyond 2^31-1, we change the
+#' ## definition of the C function as follows:
+#' ## #include <stdint.h>  //  for int64_t 
 #' ## void get64_c(double *input, int64_t *index, double *output) {
 #' ##     output[0] = input[index[0] - 1];
 #' ## }
 #' 
-#' ## We can use .C64() to call the function from R.
+#' ## Now, we can use .C64() to call get64_c() from R.
 #' .C64("get64_c", SIGNATURE = c("double", "int64", "double"),
 #'      input = x_long, index = 2^31, output = double(1))$output
+#' ## Note that 2^31 is of type double and .C64() casts it into an
+#' ## int64_t type before calling the C function get64_c().
 #'
-#' ## Note that .C64() takes 2^31 as double and casts it to int64_t
-#' ## before calling the C function get64_c().
-#'
-#' ## The performance of the previous call can be improved with
-#' ## additional options:
+#' ## The performance of the previous call can be improved by
+#' ## setting additional arguments:
 #' .C64("get64_c", SIGNATURE = c("double", "int64", "double"),
 #'      x = x_long, i = 2^31, r = numeric_dc(1), INTENT = c("r", "r", "w"),
 #'      NAOK = TRUE, PACKAGE = "dotCall64", VERBOSE = 0)$r
@@ -111,7 +110,6 @@
 #' ## The function is provided in dotCall64 and can be called with
 #' .C64("get64_f", SIGNATURE = c("double", "int64", "double"),
 #'      input = x_long, index = 2^31, output = double(1))$output
-#'
 #' }
 #' @useDynLib dotCall64, .registration = TRUE
 #' @export
