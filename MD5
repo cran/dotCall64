@@ -1,12 +1,12 @@
-0754dee2fca84c8680471efb375f08fc *DESCRIPTION
+ba3b39ae19aedefab0670c85c793bb75 *DESCRIPTION
 1ba18d2efda06ab031f178ca7e736a01 *NAMESPACE
-2c68f04593e39af2bef7f419be05e13c *NEWS.md
-8b51f3d261ad6f14bce13b6967ad569f *R/dotCall64.R
+a33fd6eefae064de19df57477d4a3372 *NEWS
+c11f66c79162ba5ca37cb92ecdcd0ab6 *R/dotCall64.R
 9979be048884f10640063c09d1b00878 *R/vector_dc.R
 6ce69e2ecaa6aafccc57181a7bc52836 *R/zzz.R
-2eaf60d9a55612cb6fd2528002cf0213 *inst/CITATION
+468713717d55d66e3b2f1c5ca74f5020 *inst/CITATION
 013a77abf97cc8a7237c37e5ff9af37a *inst/include/dotCall64.h
-bc39e8bd582afbbb7ccf09d735417ed5 *man/dotCall64.Rd
+d10da7c5d468547ea9a4d923941c23eb *man/dotCall64.Rd
 d96db3736e853f2eadce547224a297c6 *man/vector_dc.Rd
 356b809b916a94506bcdde171e6e4cfc *src/Makevars
 8ea93cdb08279ce23b8209f4dfa0bf5c *src/dotCall64.c

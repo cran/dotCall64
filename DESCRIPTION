@@ -1,8 +1,8 @@
 Package: dotCall64
 Type: Package
 Title: Enhanced Foreign Function Interface Supporting Long Vectors
-Version: 0.9-5.2
-Date: 2018-01-11
+Version: 1.0-0
+Date: 2018-07-30
 Authors@R: c(person("Kaspar", "Moesinger", role = c("aut"),
     email = "kaspar.moesinger@gmail.com"),
     person("Florian", "Gerber", role = c("cre", "ctb"),
@@ -23,10 +23,10 @@ Suggests: microbenchmark, OpenMPController, RColorBrewer, roxygen2,
 Collate: 'vector_dc.R' 'dotCall64.R' 'zzz.R'
 RoxygenNote: 6.0.1
 NeedsCompilation: yes
-Packaged: 2018-01-11 16:23:57 UTC; floger
+Packaged: 2018-07-30 17:08:56 UTC; floger
 Author: Kaspar Moesinger [aut],
   Florian Gerber [cre, ctb],
   Reinhard Furrer [ctb]
 Maintainer: Florian Gerber <florian.gerber@math.uzh.ch>
 Repository: CRAN
-Date/Publication: 2018-01-11 21:36:35 UTC
+Date/Publication: 2018-07-30 17:30:14 UTC

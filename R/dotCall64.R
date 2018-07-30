@@ -51,15 +51,16 @@
 #' The objects of the list reflect the changes made by the compiled C or Fortran function.
 #'  
 #' @references
+#' F. Gerber, K. Moesinger, R. Furrer (2018),
+#' dotCall64: An R package providing an efficient interface to compiled C, C++, and Fortran code supporting long vectors,
+#' SoftwareX 7, 217-221,
+#' https://doi.org/10.1016/j.softx.2018.06.002.
+#'  
 #' F. Gerber, K. Moesinger, and R. Furrer (2017),
 #' Extending R packages to support 64-bit compiled code: An illustration with spam64 and GIMMS NDVI3g data,
 #' Computer & Geoscience 104, 109-119,
 #' https://doi.org/10.1016/j.cageo.2016.11.015.
 #'
-#' F. Gerber, K. Moesinger, and R. Furrer (2017),
-#' dotCall64: An efficient interface to compiled C/C++ and Fortran code supporting long vectors,
-#' https://arxiv.org/abs/1702.08188.
-#' 
 #' @examples
 #' ## Consider the following C function, which is included
 #' ## in the dotCall64 package:  
