@@ -5,8 +5,15 @@
 \alias{.C64}
 \title{dotCall64 - Extended Foreign Function Interface}
 \usage{
-.C64(.NAME, SIGNATURE, ..., INTENT = NULL, NAOK = FALSE, PACKAGE = "",
-  VERBOSE = getOption("dotCall64.verbose"))
+.C64(
+  .NAME,
+  SIGNATURE,
+  ...,
+  INTENT = NULL,
+  NAOK = FALSE,
+  PACKAGE = "",
+  VERBOSE = getOption("dotCall64.verbose")
+)
 }
 \arguments{
 \item{.NAME}{character vector of length 1. Name of the compiled function to be called.}
