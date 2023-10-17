@@ -1,10 +1,10 @@
-5ed54b61f84f8ec0a2b5f6c53b4d4e7f *DESCRIPTION
+d731be208fde698799cd6302dc4661ad *DESCRIPTION
 1ba18d2efda06ab031f178ca7e736a01 *NAMESPACE
-2dc3624dfb141d1af10599f04d7d50fa *NEWS
+388746e27df9430a28c6c0940bf46817 *NEWS
 c11f66c79162ba5ca37cb92ecdcd0ab6 *R/dotCall64.R
 9979be048884f10640063c09d1b00878 *R/vector_dc.R
 6ce69e2ecaa6aafccc57181a7bc52836 *R/zzz.R
-468713717d55d66e3b2f1c5ca74f5020 *inst/CITATION
+1e55e45161844969e643a554af6bc5dd *inst/CITATION
 013a77abf97cc8a7237c37e5ff9af37a *inst/include/dotCall64.h
 573ddbb4d4711f4a498f235dd7242218 *man/dotCall64.Rd
 d96db3736e853f2eadce547224a297c6 *man/vector_dc.Rd
@@ -13,8 +13,8 @@ d96db3736e853f2eadce547224a297c6 *man/vector_dc.Rd
 028aab3a0cf0b5d15ee2d4845821bb54 *src/dotCall64helpers.c
 dad049af9ed37d954f4959b54a1cfe4e *src/init.c
 4b772404f987db420fd647b31e159fb6 *src/testfunctions_c.c
-1b0b68eab1e335c1aba9588886f4b480 *src/testfunctions_f.f
-4b8524917a613bc864ba74a64b2e61a4 *tests/run-all.R
+7bbc38cf5de54d1d2405e85d94b28af2 *src/testfunctions_f.f
+e0938a066e624e3187b55c675f7992e0 *tests/run-all.R
 dbc63fbcfec07edb4aa156b7006047cb *tests/testthat/test-againstDotC.R
 6a553a88c246cddc8162f5d670d72a4e *tests/testthat/test-flow-center.R
 270ec62a84ce15cbd3eb078000be7fc3 *tests/testthat/test-flow-left.R
