@@ -156,8 +156,11 @@ SEXP dC64(SEXP args_in) {
 			int type = dotCall64str2type(STRING_ELT(getListElement(s, "mode"), 0));
 			len = asReal(getListElement(s, "length"));
 			if(flag_verbose == 2)
-			   warning(_("[dotCall64|vector_dc] argument %d; allocate vector of type %s (%d); length %d"), na+1,  
-                                            CHAR(STRING_ELT(getListElement(s, "mode"), 0)), type, len);
+			  // eliminated the %d-len  printing due to issues on CRAN. See emails 27 November, 2023 08:58
+			  //			  warning(_("[dotCall64|vector_dc] argument %d; allocate vector of type %s (%d); length %d"), na+1,  
+                          //                  CHAR(STRING_ELT(getListElement(s, "mode"), 0)), type, len);
+			  warning(_("[dotCall64|vector_dc] argument %d; allocate vector of type %s (%d)"), na+1,  
+                                            CHAR(STRING_ELT(getListElement(s, "mode"), 0)), type);
 			args[na] = PROTECT(allocInitializedVector(type, len));
 			n_protect++;
 		}
