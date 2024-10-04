@@ -7,7 +7,7 @@ test_that("double-double", {
              PACKAGE = "dotCall64",
              VERBOSE = 1)
   dc_e <- list(a = 6.6, b = 2)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3.3, label = "[modified R object]")
 
@@ -27,7 +27,7 @@ test_that("double-double-modifiedRead", {
              a = a, b = 2, INTENT = c("r", "rw"),
              PACKAGE = "dotCall64", VERBOSE = 1)
   dc_e <- list(a = NULL, b = 2)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 6.6, label = "[modified R object]")
 
@@ -50,7 +50,7 @@ test_that("int-int", {
              a = a, b = 2L,
              PACKAGE = "dotCall64", VERBOSE = 1)
   dc_e <- list(a = 6L, b = 2L)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3L, label = "[modified R object]")
 
@@ -65,12 +65,12 @@ test_that("int-int", {
 
 
 test_that("int-int-modifiedRead", {
-  a <- 3L 
+  a <- 3L
   dc <- .C64("TEST_prod_int", c("int", "int"),
              a = a, b = 2L, INTENT = c("r", "rw"),
              PACKAGE = "dotCall64", VERBOSE = 1)
   dc_e <- list(a = NULL, b = 2L)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 6L, label = "[modified R object]")
 
@@ -94,7 +94,7 @@ test_that("int-double-rw", {
                           PACKAGE = "dotCall64", VERBOSE = 1))
   dc <- suppressWarnings(eval(expr))
   dc_e <- list(a = 6L, b = 2L)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3, label = "[modified R object]")
   expect_warning(eval(expr), "[dotCall64|wrong R object type]",
@@ -117,7 +117,7 @@ test_that("int-double-r", {
                           PACKAGE = "dotCall64", VERBOSE = 1))
   dc <- suppressWarnings(eval(expr))
   dc_e <- list(a = NULL, b = 2L)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3, label = "[modified R object]")
   expect_warning(eval(expr), "[dotCall64|wrong R object type]",
@@ -141,7 +141,7 @@ test_that("double-int-rw", {
                           PACKAGE = "dotCall64", VERBOSE = 1))
   dc <- suppressWarnings(eval(expr))
   dc_e <- list(a = 6, b = 2)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3L, label = "[modified R object]")
   expect_warning(eval(expr), "[dotCall64|wrong R object type]",
@@ -164,7 +164,7 @@ test_that("double-int-r", {
                           PACKAGE = "dotCall64", VERBOSE = 1))
   dc <- suppressWarnings(eval(expr))
   dc_e <- list(a = NULL, b = 2)
-  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))      
+  expect_equal(lapply(dc, typeof), lapply(dc_e, typeof))
   expect_equal(dc, dc_e)
   expect_identical(a, 3L, label = "[modified R object]")
   expect_warning(eval(expr), "[dotCall64|wrong R object type]",

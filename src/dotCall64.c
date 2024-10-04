@@ -1,11 +1,11 @@
 #include "dotCall64.h"
 
-// MAYBE_SHARED is not available in R 3.0.1
-#ifndef MAYBE_SHARED
-#define MAYBE_SHARED(x) (NAMED(x) > 1)
-#define NO_REFERENCES(x) (NAMED(x) == 0)
-#define MAYBE_REFERENCED(x) (! NO_REFERENCES(x))
-#endif
+// MAYBE_SHARED is not available in R 3.0.1, done in R >= 4.0
+// #ifndef MAYBE_SHARED
+// #define MAYBE_SHARED(x) (NAMED(x) > 1)
+// #define NO_REFERENCES(x) (NAMED(x) == 0)
+// #define MAYBE_REFERENCED(x) (! NO_REFERENCES(x))
+// #endif
 
 /* See http://cran.r-project.org/doc/manuals/R-exts.html#C_002dlevel-messages */
 #ifdef ENABLE_NLS
@@ -378,10 +378,11 @@ void dotCall64(DL_FUNC fun, int nargs, SEXP *args, int *args_type, int *args_int
 		}
 
 		if(flag_verbose == 2){
-			warning(_("[dotCall64|flags] arg %d: type %s (%d); alloc %d; coerce %d; dup %d;\ncast.in %d; cast.back %d; named: %d, mb-ref %d; mb-shared %d\n"),
+			warning(_("[dotCall64|flags] arg %d: type %s (%d); alloc %d; coerce %d; dup %d;\ncast.in %d; cast.back %d; mb-ref %d; mb-shared %d\n"),
 	                           na+1, type2char(do_type[na]), do_type[na], do_alloc[na],
 				do_coerce[na], do_duplicate[na], do_cast_in[na], do_cast_back[na],
-			           NAMED(s), maybe_referenced, maybe_shared);
+			        //   NAMED(s),
+				maybe_referenced, maybe_shared);
 		}
 	}
 

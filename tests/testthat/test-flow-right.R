@@ -31,7 +31,7 @@ test_that(paste0("right-", paste0(tg[i,], collapse = "-")), {
                     int = integer_dc(1),
                     double = numeric_dc(1),
                     int64 = numeric_dc(1))
-      
+
     expr <- expression(
           .C64(paste0("TEST_times2_", signature),
                c(signature, signature),
@@ -59,7 +59,7 @@ test_that(paste0("right-", paste0(tg[i,], collapse = "-")), {
                                int64 = 2^32),
                      label = "[corrupt R object]",
                      info = info)
- 
+
     if(referenced)
       expect_identical(b, switch(type,
                                  int = 1L,

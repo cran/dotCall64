@@ -8,7 +8,7 @@ test_that("int", {
                PACKAGE = "dotCall64")
     expect_equal(cc, dc, label = "[values]")
     expect_equal(lapply(cc, typeof), lapply(dc, typeof),
-                 label = "[types]")             
+                 label = "[types]")
     })
 
 
@@ -21,7 +21,7 @@ test_that("double", {
                PACKAGE = "dotCall64")
     expect_equal(cc, dc, label = "[values]")
     expect_equal(lapply(cc, typeof), lapply(dc, typeof),
-                 label = "[types]")   
+                 label = "[types]")
     })
 
 ## --------------------
@@ -35,7 +35,7 @@ test_that("referenced-integer", {
                PACKAGE = "dotCall64")
     expect_equal(cc, dc, label = "[values]")
     expect_equal(lapply(cc, typeof), lapply(dc, typeof),
-                 label = "[types]")   
+                 label = "[types]")
     expect_identical(input, 2L)
 })
 
@@ -49,6 +49,6 @@ test_that("referenced-double", {
                PACKAGE = "dotCall64")
     expect_equal(cc, dc, label = "[values]")
     expect_equal(lapply(cc, typeof), lapply(dc, typeof),
-                 label = "[types]")   
+                 label = "[types]")
     expect_identical(input, 2.2)
 })
